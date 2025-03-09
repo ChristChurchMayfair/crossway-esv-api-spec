@@ -137,7 +137,7 @@ components:
           items:
             type: string
   securitySchemes:
-    API Key:
+    API_Key:
       type: apiKey
       in: header
       name: Authorization
@@ -490,4 +490,4 @@ paths:
                     type: integer
                     description: "The total number of pages."
 security:
-  - API Key: []
+  - API_Key: []
