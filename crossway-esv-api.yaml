@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: "Unofficial Crossway ESV API"
-  description: "This is an unofficial API spec for the ESV Bible from Crossway."
+  description: "This is an **unofficial** API spec for the ESV Bible from Crossway."
   version: "1.0.0"
   contact:
     name: Crossway
@@ -96,7 +96,7 @@ components:
         type: boolean
         default: false
   schemas:
-    textualResponse:
+    passageTextualResponse:
       type: object
       properties:
         query:
@@ -249,7 +249,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/textualResponse"
+                $ref: "#/components/schemas/passageTextualResponse"
   /v3/passage/html/:
     get:
       summary: Get Passage HTML
@@ -420,7 +420,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/textualResponse"
+                $ref: "#/components/schemas/passageTextualResponse"
   /v3/passage/audio/:
     get:
       summary: Get Passage Audio
