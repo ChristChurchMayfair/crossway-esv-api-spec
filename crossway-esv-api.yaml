@@ -98,6 +98,7 @@ components:
   schemas:
     passageTextualResponse:
       type: object
+      description: "The response object for textual (e.g. text or HTML) passages."
       properties:
         query:
           type: string
@@ -105,6 +106,12 @@ components:
         canonical:
           type: string
           description: "The canonical passage."
+        parsed:
+          type: array
+          items:
+            type: array
+            items:
+              type: integer
         passage_meta:
           type: array
           items:
@@ -114,10 +121,14 @@ components:
                 type: string
                 description: "The canonical passage."
               chapter_start:
-                type: integer
+                type: array
+                items:
+                  type: integer
                 description: "The chapter start."
               chapter_end:
-                type: integer
+                type: array
+                items:
+                  type: integer
                 description: "The chapter end."
               prev_verse:
                 type: integer
@@ -126,10 +137,14 @@ components:
                 type: integer
                 description: "The next verse."
               prev_chapter:
-                type: integer
+                type: array
+                items:
+                  type: integer
                 description: "The previous chapter."
               next_chapter:
-                type: integer
+                type: array
+                items:
+                  type: integer
                 description: "The next chapter."
         passages:
           type: array
