@@ -1,0 +1,57 @@
+openapi: 3.1.0
+info:
+  title: "Unofficial Crossway ESV API"
+  description: "This is an unofficial API for the ESV Bible from Crossway."
+  version: "1.0.0"
+  contact:
+    name: Contact Name
+    email: contact@example.com
+    url: https://example.com/
+paths:
+  /v3/passage/text:
+    get:
+      summary: Get Passage Text
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  query:
+                    type: string
+                    description: "The passage query."
+                  canonical:
+                    type: string
+                    description: "The canonical passage."
+                  passage_meta:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        canonical:
+                          type: string
+                          description: "The canonical passage."
+                        chapter_start:
+                          type: integer
+                          description: "The chapter start."
+                        chapter_end:
+                          type: integer
+                          description: "The chapter end."
+                        prev_verse:
+                          type: integer
+                          description: "The previous verse."
+                        next_verse:
+                          type: integer
+                          description: "The next verse."
+                        prev_chapter:
+                          type: integer
+                          description: "The previous chapter."
+                        next_chapter:
+                          type: integer
+                          description: "The next chapter."
+                  passages:
+                    type: array
+                    items:
+                      type: string
