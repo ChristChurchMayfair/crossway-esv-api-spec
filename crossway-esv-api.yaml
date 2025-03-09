@@ -4,9 +4,8 @@ info:
   description: "This is an unofficial API spec for the ESV Bible from Crossway."
   version: "1.0.0"
   contact:
-    name: Tom Duckering
-    email: tom@christchurchmayfair.org
-    url: https://github.com/ChristChurchMayfair
+    name: Crossway
+    url: https://api.esv.org
 servers:
   - url: https://api.esv.org
     description: "Crossway ESV API"
