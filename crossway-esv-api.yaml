@@ -1,4 +1,4 @@
-openapi: 3.1.0
+openapi: 3.0.0
 info:
   title: "Unofficial Crossway ESV API"
   description: "This is an unofficial API for the ESV Bible from Crossway."
@@ -7,10 +7,460 @@ info:
     name: Contact Name
     email: contact@example.com
     url: https://example.com/
+servers:
+  - url: https://api.esv.org
+    description: "Crossway ESV API"
+components:
+  parameters:
+    q:
+      name: q
+      in: query
+      description: "This is the requested passage. We try our best to parse a meaningful passage reference from this value."
+      required: true
+      schema:
+        type: string
+      examples:
+        "John 1:1":
+          value: "John 1:1"
+        "jn11.35":
+          value: "jn11.35"
+        "Genesis 1-3":
+          value: "Genesis 1-3"
+        "01001001-01011032":
+          value: "01001001-01011032"
+        "John1.1;Genesis1.1":
+          value: "John1.1;Genesis1.1"
+        "19001001-19001006,19003001-19003008":
+          value: "19001001-19001006,19003001-19003008"
+    include-passage-references:
+      name: include-passage-references
+      in: query
+      description: "Include the passage reference before the text."
+      required: false
+      schema:
+        type: boolean
+        default: true
+    include-verse-numbers:
+      name: include-verse-numbers
+      in: query
+      description: "Include verse numbers."
+      required: false
+      schema:
+        type: boolean
+        default: true
+    include-first-verse-numbers:
+      name: include-first-verse-numbers
+      in: query
+      description: "Include the verse number for the first verse of a chapter."
+      required: false
+      schema:
+        type: boolean
+        default: true
+    include-footnotes:
+      name: include-footnotes
+      in: query
+      description: "Include callouts to footnotes in the text."
+      required: false
+      schema:
+        type: boolean
+        default: true
+    include-footnote-body:
+      name: include-footnote-body
+      in: query
+      description: "Include footnote bodies below the text. Only works if include-footnotes is also true."
+      required: false
+      schema:
+        type: boolean
+        default: true
+    include-headings:
+      name: include-headings
+      in: query
+      description: "Include section headings. For example, the section heading of Matthew 5 is \"The Sermon on the Mount\"."
+      required: false
+      schema:
+        type: boolean
+        default: true
+    include-short-copyright:
+      name: include-short-copyright
+      in: query
+      description: "Include \"(ESV)\" at the end of the text. Mutually exclusive with include-copyright. This fulfills your copyright display requirements."
+      required: false
+      schema:
+        type: boolean
+        default: true
+    include-copyright:
+      name: include-copyright
+      in: query
+      description: "Include a copyright notice at the end of the text. Mutually exclusive with include-short-copyright. This fulfills your copyright display requirements."
+      required: false
+      schema:
+        type: boolean
+        default: false
+  schemas:
+    textualResponse:
+      type: object
+      properties:
+        query:
+          type: string
+          description: "The passage query."
+        canonical:
+          type: string
+          description: "The canonical passage."
+        passage_meta:
+          type: array
+          items:
+            type: object
+            properties:
+              canonical:
+                type: string
+                description: "The canonical passage."
+              chapter_start:
+                type: integer
+                description: "The chapter start."
+              chapter_end:
+                type: integer
+                description: "The chapter end."
+              prev_verse:
+                type: integer
+                description: "The previous verse."
+              next_verse:
+                type: integer
+                description: "The next verse."
+              prev_chapter:
+                type: integer
+                description: "The previous chapter."
+              next_chapter:
+                type: integer
+                description: "The next chapter."
+        passages:
+          type: array
+          items:
+            type: string
+  securitySchemes:
+    API Key:
+      type: apiKey
+      in: header
+      name: Authorization
 paths:
-  /v3/passage/text:
+  /v3/passage/text/:
     get:
       summary: Get Passage Text
+      parameters:
+        - name: q
+          $ref: "#/components/parameters/q"
+        - name: include-passage-references
+          $ref: "#/components/parameters/include-passage-references"
+        - name: include-verse-numbers
+          $ref: "#/components/parameters/include-verse-numbers"
+        - name: include-first-verse-numbers
+          $ref: "#/components/parameters/include-first-verse-numbers"
+        - name: include-footnotes
+          $ref: "#/components/parameters/include-footnotes"
+        - name: include-footnote-body
+          $ref: "#/components/parameters/include-footnote-body"
+        - name: include-headings
+          $ref: "#/components/parameters/include-headings"
+        - name: include-short-copyright
+          $ref: "#/components/parameters/include-short-copyright"
+        - name: include-copyright
+          $ref: "#/components/parameters/include-copyright"
+        - name: include-passage-horizontal-lines
+          in: query
+          description: "Include a line of equal signs (====) above the beginning of each passage."
+          required: false
+          schema:
+            type: boolean
+            default: false
+        - name: include-heading-horizontal-lines
+          in: query
+          description: "Include a visual line of underscores (____) above each section heading."
+          required: false
+          schema:
+            type: boolean
+            default: false
+        - name: horiztonal-line-length
+          in: query
+          description: "Controls the length of the line for include-passage-horizontal-lines and include-heading-horizontal-lines."
+          required: false
+          schema:
+            type: integer
+            default: 55
+        - name: include-selahs
+          in: query
+          description: "Include \"Selah\" in certain Psalms."
+          required: false
+          schema:
+            type: boolean
+            default: true
+        - name: indent-using
+          in: query
+          description: "Controls indentation."
+          required: false
+          schema:
+            type: string
+            enum:
+              - "space"
+              - "tab"
+            default: "space"
+        - name: indent-paragraphs
+          in: query
+          description: "Controls how many indentation characters start a paragraph."
+          required: false
+          schema:
+            type: integer
+            default: 2
+        - name: indent-poetry
+          in: query
+          description: "Controls indentation of poetry lines."
+          required: false
+          schema:
+            type: boolean
+            default: true
+        - name: indent-poetry-lines
+          in: query
+          description: "Controls how many indentation characters are used per indentation level for poetry lines."
+          required: false
+          schema:
+            type: integer
+            default: 4
+        - name: indent-declares
+          in: query
+          description: Controls how many indentation characters are used for "Declares the LORD" in some of the prophets."
+          required: false
+          schema:
+            type: integer
+            default: 40
+        - name: indent-psalm-doxology
+          in: query
+          description: "Controls how many indentation characters are used for Psalm doxologies."
+          required: false
+          schema:
+            type: integer
+            default: 30
+        - name: line-length
+          in: query
+          description: "Controls how long a line can be before it is wrapped. Use 0 for unlimited line lengths."
+          required: false
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/textualResponse"
+  /v3/passage/html/:
+    get:
+      summary: Get Passage HTML
+      parameters:
+        - name: q
+          $ref: "#/components/parameters/q"
+        - name: include-passage-references
+          $ref: "#/components/parameters/include-passage-references"
+        - name: include-verse-numbers
+          $ref: "#/components/parameters/include-verse-numbers"
+        - name: include-first-verse-numbers
+          $ref: "#/components/parameters/include-first-verse-numbers"
+        - name: include-footnotes
+          $ref: "#/components/parameters/include-footnotes"
+        - name: include-footnote-body
+          $ref: "#/components/parameters/include-footnote-body"
+        - name: include-headings
+          $ref: "#/components/parameters/include-headings"
+        - name: include-short-copyright
+          $ref: "#/components/parameters/include-short-copyright"
+        - name: include-copyright
+          $ref: "#/components/parameters/include-copyright"
+        - name: include-css-link
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: false
+          description: "Include a link tag that provides CSS for the returned text."
+
+        - name: inline-styles
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: false
+          description: "Include inline CSS for the returned text."
+
+        - name: wrapping-div
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: false
+          description: "Wrap the text in a div tag with feature classes applied."
+
+        - name: div-classes
+          in: query
+          required: false
+          schema:
+            type: string
+            default: passage
+          description: "Add extra CSS classes to the wrapping div generated by the option above."
+
+        - name: paragraph-tag
+          in: query
+          required: false
+          schema:
+            type: string
+            default: p
+          description: "Customize the HTML tag used for paragraph elements."
+
+        - name: include-book-titles
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: false
+          description: "Include an h2 containing a book name if the first verse of a book is in the requested text."
+
+        - name: include-verse-anchors
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: false
+          description: "Add an anchor tag at every verse and heading boundary containing embedded verse data."
+
+        - name: include-chapter-numbers
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: true
+          description: "Include a chapter number if the first verse in a chapter is in the requested text."
+
+        - name: include-crossrefs
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: false
+          description: "Include cross-reference call-outs in the text."
+
+        - name: include-subheadings
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: true
+          description: "Include subheadings. Subheadings are the titles of psalms (e.g., Psalm 73's 'A Maskil of Asaph'), the acrostic divisions in Psalm 119, the speakers in Song of Solomon, and the textual notes that appear in John 7 and Mark 16."
+
+        - name: include-surrounding-chapters
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: false
+          description: "Show links above the text to the previous, current (if not showing the whole chapter) and next chapters in the Bible. You can modify the link by changing the link-url parameter."
+
+        - name: include-surrounding-chapters-below
+          in: query
+          required: false
+          schema:
+            type: string
+            default: smart
+            enum:
+              - "true"
+              - "false"
+              - smart
+          description: "Same as the include-surrounding-chapters parameter above, but the links are rendered below the text. This value may also be the string smart, in which case the links will be shown based on the include-surrounding-chapters parameter."
+
+        - name: link-url
+          in: query
+          required: false
+          schema:
+            type: string
+            default: ''
+          description: "Where embedded links to other passages should point. Applies only when include-surrounding-chapters is set to true."
+
+        - name: crossref-url
+          in: query
+          required: false
+          schema:
+            type: string
+            default: ''
+          description: "Where embedded cross reference links should point. Only applies if include-crossrefs is true."
+
+        - name: preface-url
+          in: query
+          required: false
+          schema:
+            type: string
+            default: https://www.esv.org/preface/
+          description: "Where embedded links to the preface should point. Only applies if include-footnotes is true."
+
+        - name: include-audio-link
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: true
+          description: "Include a link to the audio version of the requested passage. The link appears in a small tag in the passage's identifying h2 tag."
+
+        - name: attach-audio-link-to
+          in: query
+          required: false
+          schema:
+            type: string
+            default: passage
+            enum:
+              - passage
+              - heading
+          description: "Which feature to attach the audio link to. Must be either passage or heading."
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/textualResponse"
+  /v3/passage/audio/:
+    get:
+      summary: Get Passage Audio
+      parameters:
+        - name: q
+          $ref: "#/components/parameters/q"
+      responses:
+        '200':
+          description: OK
+          content:
+            audio/mpeg:
+              schema:
+                type: string
+                format: binary
+  /v3/passage/search/:
+    get:
+      summary: Search for Passages
+      parameters:
+        - name: q
+          in: query
+          description: "The search query. If you want results for an exact phrase, wrap your query in double quotes. For instance, the query in love returns many more results than the query \"in love\" because the latter only returns matches for the exact phrase."
+          required: true
+          schema:
+            type: string
+        - name: page-size
+          in: query
+          description: "The number of results per page."
+          required: false
+          schema:
+            type: integer
+            default: 20
+            maximum: 100
+        - name: page
+          in: query
+          description: "Which page of results you want. This parameter works in conjunction with the page-size parameter."
+          required: false
+          schema:
+            type: integer
+            default: 1
       responses:
         '200':
           description: OK
@@ -19,39 +469,25 @@ paths:
               schema:
                 type: object
                 properties:
-                  query:
-                    type: string
-                    description: "The passage query."
-                  canonical:
-                    type: string
-                    description: "The canonical passage."
-                  passage_meta:
+                  page:
+                    type: integer
+                    description: "The current page."
+                  total_results:
+                    type: integer
+                    description: "The total number of results."
+                  results:
                     type: array
                     items:
                       type: object
                       properties:
-                        canonical:
+                        reference:
                           type: string
-                          description: "The canonical passage."
-                        chapter_start:
-                          type: integer
-                          description: "The chapter start."
-                        chapter_end:
-                          type: integer
-                          description: "The chapter end."
-                        prev_verse:
-                          type: integer
-                          description: "The previous verse."
-                        next_verse:
-                          type: integer
-                          description: "The next verse."
-                        prev_chapter:
-                          type: integer
-                          description: "The previous chapter."
-                        next_chapter:
-                          type: integer
-                          description: "The next chapter."
-                  passages:
-                    type: array
-                    items:
-                      type: string
+                          description: "The reference."
+                        content:
+                          type: string
+                          description: "The content."
+                  total_pages:
+                    type: integer
+                    description: "The total number of pages."
+security:
+  - API Key: []
