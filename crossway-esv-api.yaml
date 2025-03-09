@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: "Unofficial Crossway ESV API"
-  description: "This is an unofficial API for the ESV Bible from Crossway."
+  description: "This is an unofficial API spec for the ESV Bible from Crossway."
   version: "1.0.0"
   contact:
     name: Contact Name
